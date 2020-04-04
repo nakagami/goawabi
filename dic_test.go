@@ -25,16 +25,20 @@ SOFTWARE.
 package goawabi
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestMatrix(t *testing.T) {
 	mecabrc_map, _ := get_mecabrc_map("")
 	path := get_dic_path(mecabrc_map, "matrix.bin")
-	fmt.Println(path)
-	_, err := newMatrix(path)
+	m, err := newMatrix(path)
 	if err != nil {
 		t.Fatal(err)
+	}
+	if m.getTransCost(555, 1283) != 340 {
+		t.Errorf("getTransCost(555, 1283)")
+	}
+	if m.getTransCost(10, 1293) != -1376 {
+		t.Errorf("getTransCost(10, 1293)")
 	}
 }

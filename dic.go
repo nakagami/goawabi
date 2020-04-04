@@ -38,14 +38,21 @@ type matrix struct {
 
 func newMatrix(path string) (m *matrix, err error) {
 	f, err := os.Open(path)
-	defer f.Close()
+
 	if err != nil {
 		return nil, err
 	}
-	data, err := syscall.Mmap(int(f.Fd()), 0, 0, syscall.PROT_READ, syscall.MAP_SHARED)
+	defer f.Close()
+	finfo, _ := f.Stat()
+	data, err := syscall.Mmap(int(f.Fd()), 0, int(finfo.Size()), syscall.PROT_READ, syscall.MAP_SHARED)
+	if err != nil {
+		return nil, err
+	}
 
 	m = new(matrix)
 	m.data = data
+	m.lsize = int(binary.LittleEndian.Uint16(m.data))
+	m.rsize = int(binary.LittleEndian.Uint16(m.data[2:]))
 
 	return m, err
 }
