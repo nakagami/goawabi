@@ -28,6 +28,7 @@ import (
 	"bufio"
 	"errors"
 	"os"
+	"path/filepath"
 	"regexp"
 )
 
@@ -70,4 +71,8 @@ func get_mecabrc_map(path string) (mecabrc_map map[string]string, err error) {
 		}
 	}
 	return mecabrc_map, err
+}
+
+func get_dic_path(mecabrc_map map[string]string, filename string) string {
+	return filepath.Join(mecabrc_map["dicdir"], filename)
 }

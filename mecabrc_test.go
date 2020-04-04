@@ -25,6 +25,7 @@ SOFTWARE.
 package goawabi
 
 import (
+	"os"
 	"testing"
 )
 
@@ -42,5 +43,16 @@ func TestGetMecabRcMap(t *testing.T) {
 	}
 	if _, ok := mecabrc_map["dicdir"]; !ok {
 		t.Fatalf("Can't find dicdir")
+	}
+}
+
+func TestGetDicPath(t *testing.T) {
+	mecabrc_map, _ := get_mecabrc_map("")
+	for _, s := range []string{"sys.dic", "unk.dic", "matrix.bin", "char.bin"} {
+		path := get_dic_path(mecabrc_map, s)
+		_, err := os.Stat(path)
+		if os.IsNotExist(err) {
+			t.Fatalf("Can't find %s", path)
+		}
 	}
 }
