@@ -30,6 +30,31 @@ import (
 	"syscall"
 )
 
+type DicEntry struct {
+	original string
+	lc_attr  uint16
+	rc_attr  uint16
+	posid    uint16
+	wcost    int16
+	feature  string
+}
+
+type charProperty struct {
+	data           []byte
+	category_names []string
+	offset         int
+}
+
+type mecabDic struct {
+	data           []byte
+	dic_size       int
+	lsize          int
+	rsize          int
+	da_offset      int
+	token_offset   int
+	feature_offset int
+}
+
 type matrix struct {
 	data  []byte
 	lsize int
