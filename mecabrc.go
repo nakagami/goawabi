@@ -25,10 +25,10 @@ SOFTWARE.
 package goawabi
 
 import (
+	"bufio"
 	"errors"
 	"os"
-	"bufio"
-	"fmt"
+	"regexp"
 )
 
 func find_mecabrc() (path string, err error) {
@@ -62,9 +62,12 @@ func get_mecabrc_map(path string) (mecabrc_map map[string]string, err error) {
 	defer fp.Close()
 
 	scanner := bufio.NewScanner(fp)
+	re := regexp.MustCompile(`^(\S+)\s*=\s*(\S+)`)
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		group := re.FindAllStringSubmatch(scanner.Text(), -1)
+		if len(group) == 1 { // at most 1
+			mecabrc_map[group[0][1]] = group[0][2]
+		}
 	}
-
 	return mecabrc_map, err
 }

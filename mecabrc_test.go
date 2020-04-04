@@ -34,3 +34,13 @@ func TestFindMecabRc(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestGetMecabRcMap(t *testing.T) {
+	mecabrc_map, err := get_mecabrc_map("")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := mecabrc_map["dicdir"]; !ok {
+		t.Fatalf("Can't find dicdir")
+	}
+}
