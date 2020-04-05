@@ -127,6 +127,14 @@ func newMecabDic(path string) (m *mecabDic, err error) {
 	return m, err
 }
 
+func (m *mecabDic) baseCheck(idx int) (int32, uint32) {
+	i := m.da_offset + idx*8
+	base := int32(binary.LittleEndian.Uint32(m.data[i:]))
+	check := binary.LittleEndian.Uint32(m.data[i+4:])
+
+	return base, check
+}
+
 // Matrix
 
 type matrix struct {
