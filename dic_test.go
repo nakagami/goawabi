@@ -42,3 +42,19 @@ func TestMatrix(t *testing.T) {
 		t.Errorf("getTransCost(10, 1293)")
 	}
 }
+
+func TestCharPropery(t *testing.T) {
+	mecabrc_map, _ := get_mecabrc_map("")
+	path := get_dic_path(mecabrc_map, "char.bin")
+	cp, err := newCharProperty(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i, s := range []string{"DEFAULT", "SPACE", "KANJI", "SYMBOL", "NUMERIC", "ALPHA", "HIRAGANA", "KATAKANA", "KANJINUMERIC", "GREEK", "CYRILLIC"} {
+		if s != cp.category_names[i] {
+			t.Errorf("category_name %s is invalid", cp.category_names[i])
+		}
+	}
+
+}

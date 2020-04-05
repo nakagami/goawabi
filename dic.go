@@ -30,6 +30,14 @@ import (
 	"syscall"
 )
 
+func c_str_to_string(data []byte) string {
+	i := 0
+	for data[i] != 0 {
+		i++
+	}
+	return string(data[:i])
+}
+
 type DicEntry struct {
 	original string
 	lc_attr  uint16
@@ -43,6 +51,31 @@ type charProperty struct {
 	data           []byte
 	category_names []string
 	offset         int
+}
+
+func newCharProperty(path string) (cp *charProperty, err error) {
+	f, err := os.Open(path)
+
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	finfo, _ := f.Stat()
+	data, err := syscall.Mmap(int(f.Fd()), 0, int(finfo.Size()), syscall.PROT_READ, syscall.MAP_SHARED)
+	if err != nil {
+		return nil, err
+	}
+
+	cp = new(charProperty)
+	cp.data = data
+	category_size := int(binary.LittleEndian.Uint32(cp.data))
+	cp.category_names = make([]string, category_size)
+	for i := 0; i < category_size; i++ {
+		cp.category_names[i] = c_str_to_string(cp.data[4+i*32 : 4+(i+1)*32])
+	}
+	cp.offset = 4 + category_size*32
+
+	return cp, err
 }
 
 type mecabDic struct {
