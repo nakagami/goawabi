@@ -140,7 +140,7 @@ func (m *mecabDic) exactMatchSearch(s []byte) int32 {
 	var p uint32
 	b, _ := m.baseCheck(0)
 	for _, item := range s {
-		p = uint32(b + int32(item)) + 1
+		p = uint32(b+int32(item)) + 1
 		base, check := m.baseCheck(p)
 		if b == int32(check) {
 			b = base
@@ -152,7 +152,7 @@ func (m *mecabDic) exactMatchSearch(s []byte) int32 {
 	p = uint32(b)
 	n, check := m.baseCheck(p)
 	if b == int32(check) && n < 0 {
-		v = -n -1
+		v = -n - 1
 	}
 
 	return v

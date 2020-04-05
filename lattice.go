@@ -24,3 +24,79 @@ SOFTWARE.
 
 package goawabi
 
+type Node struct {
+	entry      *DicEntry
+	pos        int32
+	epos       int32
+	index      int32
+	left_id    int32
+	right_id   int32
+	cost       int32
+	min_cost   int32
+	back_pos   int32
+	back_index int32
+}
+
+func newBos() *Node {
+	node := new(Node)
+	node.entry = nil
+	node.pos = 0
+	node.epos = 1
+	node.index = 0
+	node.left_id = -1
+	node.right_id = 0
+	node.cost = 0
+	node.min_cost = 0
+	node.back_pos = -1
+	node.back_index = -1
+
+	return node
+}
+
+func newEos(pos int32) *Node {
+	node := new(Node)
+	node.entry = nil
+	node.pos = pos
+	node.epos = pos + 1
+	node.index = 0
+	node.left_id = 0
+	node.right_id = -1
+	node.cost = 0
+	node.min_cost = 0x7FFFFFFF
+	node.back_pos = -1
+	node.back_index = -1
+
+	return node
+}
+
+func newNode(e *DicEntry) *Node {
+	node := new(Node)
+	node.entry = e
+	node.pos = 0
+	node.epos = 0
+	node.index = int32(e.posid)
+	node.left_id = int32(e.lc_attr)
+	node.right_id = int32(e.rc_attr)
+	node.cost = int32(e.wcost)
+	node.min_cost = 0x7FFFFFFF
+	node.back_pos = -1
+	node.back_index = -1
+
+	return node
+}
+
+func (node *Node) isBos() bool {
+	return node.entry == nil && node.pos == 0
+}
+
+func (node *Node) isEos() bool {
+	return node.entry == nil && node.pos != 0
+}
+
+func (node *Node) nodeLen() int {
+	if node.entry == nil {
+		return len(node.entry.original)
+	}
+
+	return 1 // BOS or EOS
+}
