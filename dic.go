@@ -30,14 +30,6 @@ import (
 	"syscall"
 )
 
-func c_str_to_string(data []byte) string {
-	i := 0
-	for data[i] != 0 {
-		i++
-	}
-	return string(data[:i])
-}
-
 type DicEntry struct {
 	original string
 	lc_attr  uint16
@@ -46,6 +38,16 @@ type DicEntry struct {
 	wcost    int16
 	feature  string
 }
+
+func c_str_to_string(data []byte) string {
+	i := 0
+	for data[i] != 0 {
+		i++
+	}
+	return string(data[:i])
+}
+
+// CharProperty
 
 type charProperty struct {
 	data           []byte
@@ -77,6 +79,8 @@ func newCharProperty(path string) (cp *charProperty, err error) {
 
 	return cp, err
 }
+
+// MecabDic
 
 type mecabDic struct {
 	data           []byte
@@ -112,6 +116,8 @@ func newMecabDic(path string) (m *mecabDic, err error) {
 
 	return m, err
 }
+
+// Matrix
 
 type matrix struct {
 	data  []byte
