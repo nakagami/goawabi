@@ -24,6 +24,8 @@ SOFTWARE.
 
 package goawabi
 
+// Node
+
 type Node struct {
 	entry      *DicEntry
 	pos        int32
@@ -99,4 +101,12 @@ func (node *Node) nodeLen() int {
 	}
 
 	return 1 // BOS or EOS
+}
+
+// Lattice
+
+type Lattice struct {
+	snodes [][]Node
+	enodes [][]Node
+	p      int32
 }
