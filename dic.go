@@ -80,6 +80,16 @@ func newCharProperty(path string) (cp *charProperty, err error) {
 	return cp, err
 }
 
+func (cp *charProperty) getCharInfo(code_point uint16) (uint32, uint32, uint32, uint32, uint32) {
+	v := binary.LittleEndian.Uint32(cp.data[cp.offset+int(code_point)*4:])
+	default_type := (v >> 18) & 0b11111111
+	char_type := v & 0b111111111111111111
+	char_count := (v >> 26) & 0b1111
+	group := (v >> 30) & 0b1
+	invoke := (v >> 31) & 0b1
+	return default_type, char_type, char_count, group, invoke
+}
+
 // MecabDic
 
 type mecabDic struct {
