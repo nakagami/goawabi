@@ -127,12 +127,35 @@ func newMecabDic(path string) (m *mecabDic, err error) {
 	return m, err
 }
 
-func (m *mecabDic) baseCheck(idx int) (int32, uint32) {
-	i := m.da_offset + idx*8
+func (m *mecabDic) baseCheck(idx uint32) (int32, uint32) {
+	i := m.da_offset + int(idx*8)
 	base := int32(binary.LittleEndian.Uint32(m.data[i:]))
 	check := binary.LittleEndian.Uint32(m.data[i+4:])
 
 	return base, check
+}
+
+func (m *mecabDic) exactMatchSearch(s []byte) int32 {
+	var v int32 = -1
+	var p uint32
+	b, _ := m.baseCheck(0)
+	for _, item := range s {
+		p = uint32(b + int32(item)) + 1
+		base, check := m.baseCheck(p)
+		if b == int32(check) {
+			b = base
+		} else {
+			return v
+		}
+	}
+
+	p = uint32(b)
+	n, check := m.baseCheck(p)
+	if b == int32(check) && n < 0 {
+		v = -n -1
+	}
+
+	return v
 }
 
 // Matrix
