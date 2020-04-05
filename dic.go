@@ -88,6 +88,31 @@ type mecabDic struct {
 	feature_offset int
 }
 
+func newMecabDic(path string) (m *mecabDic, err error) {
+	f, err := os.Open(path)
+
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	finfo, _ := f.Stat()
+	data, err := syscall.Mmap(int(f.Fd()), 0, int(finfo.Size()), syscall.PROT_READ, syscall.MAP_SHARED)
+	if err != nil {
+		return nil, err
+	}
+
+	m = new(mecabDic)
+	m.data = data
+	m.dic_size = int(binary.LittleEndian.Uint32(m.data[0:]) ^ 0xef718f77)
+	m.lsize = int(binary.LittleEndian.Uint32(m.data[16:]))
+	m.rsize = int(binary.LittleEndian.Uint32(m.data[20:]))
+	m.da_offset = 72
+	m.token_offset = m.da_offset + int(binary.LittleEndian.Uint32(m.data[24:]))
+	m.feature_offset = m.token_offset + int(binary.LittleEndian.Uint32(m.data[28:]))
+
+	return m, err
+}
+
 type matrix struct {
 	data  []byte
 	lsize int

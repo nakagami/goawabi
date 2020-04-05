@@ -58,3 +58,15 @@ func TestCharPropery(t *testing.T) {
 	}
 
 }
+
+func TestMecabDic(t *testing.T) {
+	mecabrc_map, _ := get_mecabrc_map("")
+	path := get_dic_path(mecabrc_map, "sys.dic")
+	m, err := newMecabDic(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if m.dic_size != 49199027 {
+		t.Errorf("sys.dic is incollect size %d", m.dic_size)
+	}
+}
