@@ -158,6 +158,34 @@ func (m *mecabDic) exactMatchSearch(s []byte) int32 {
 	return v
 }
 
+func (m *mecabDic) commonPrefixSearch(s []byte) [][2]int32 {
+	results := make([][2]int32, 0)
+	var p uint32
+	b, _ := m.baseCheck(0)
+	for i, item := range s {
+		p = uint32(b)
+		n, check := m.baseCheck(p)
+		if b == int32(check) && n < 0 {
+			results = append(results, [2]int32{-n - 1, int32(i)})
+		}
+		p = uint32((b + int32(item))) + 1
+		base, check := m.baseCheck(p)
+		if b == int32(check) {
+			b = base
+		} else {
+			return results
+		}
+	}
+	p = uint32(b)
+
+	n, check := m.baseCheck(p)
+	if b == int32(check) && n < 0 {
+		results = append(results, [2]int32{-n - 1, int32(len(s))})
+	}
+
+	return results
+}
+
 // Matrix
 
 type matrix struct {
