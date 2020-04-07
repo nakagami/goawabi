@@ -132,9 +132,8 @@ func (cp *charProperty) getCharInfo(code_point uint16) (uint32, uint32, uint32, 
 	return default_type, char_type, char_count, group, invoke
 }
 
-func (cp *charProperty) getGroupLength(s []byte, default_type uint32, max_count uint32) int {
-	var i int
-	var char_count uint32
+func (cp *charProperty) getGroupLength(s []byte, default_type uint32, max_count int) int {
+	var i, char_count int
 
 	for i < len(s) {
 		ch16, ln := utf8ToUcs2(s, i)
@@ -161,6 +160,20 @@ func (cp *charProperty) getCountLength(s []byte, count int) int {
 		i += ln
 	}
 	return i
+}
+
+func (cp *charProperty) getUnknownLength(s []byte) (uint32, []int, bool) {
+	// get unknown word bytes length vector
+	ln_list := make([]int, 0)
+	ch16, _ := utf8ToUcs2(s, 0)
+	default_type, _, count, group, invoke := cp.getCharInfo(ch16)
+	if group != 0 {
+		ln_list = append(ln_list, cp.getGroupLength(s, default_type, int(count)))
+	} else {
+		ln_list = append(ln_list, cp.getCountLength(s, int(count)))
+	}
+
+	return default_type, ln_list, invoke == 1
 }
 
 // MecabDic
