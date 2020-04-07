@@ -47,6 +47,48 @@ func c_str_to_string(data []byte) string {
 	return string(data[:i])
 }
 
+func utf8ToUcs2(s []byte, index int) (uint16, int) {
+	// utf8 to ucs2(16bit) code and it's array size
+	ln := 0
+
+	if (s[index] & 0b10000000) == 0b00000000 {
+		ln = 1
+	} else if (s[index] & 0b11100000) == 0b11000000 {
+		ln = 2
+	} else if (s[index] & 0b11110000) == 0b11100000 {
+		ln = 3
+	} else if (s[index] & 0b11111000) == 0b11110000 {
+		ln = 4
+	}
+
+	var ch32 uint32
+	switch ln {
+	case 1:
+		ch32 = uint32(s[index+0])
+	case 2:
+		ch32 = uint32(s[index+0]&0x1F) << 6
+		ch32 |= uint32(s[index+1] & 0x3F)
+	case 3:
+		ch32 = uint32(s[index+0]&0x0F) << 12
+		ch32 |= uint32(s[index+1]&0x3F) << 6
+		ch32 |= uint32(s[index+2] & 0x3F)
+	case 4:
+		ch32 = uint32(s[index+0]&0x07) << 18
+		ch32 |= uint32(s[index+1]&0x3F) << 12
+		ch32 |= uint32(s[index+2]&0x3F) << 6
+		ch32 |= uint32(s[index+3] & 0x03F)
+	}
+
+	// ucs4 to ucs2
+	var ch16 uint16
+	if ch32 < 0x10000 {
+		ch16 = uint16(ch32)
+	} else {
+		ch16 = uint16((((ch32-0x10000)/0x400 + 0xD800) << 8) + ((ch32-0x10000)%0x400 + 0xDC00))
+	}
+	return ch16, ln
+}
+
 // CharProperty
 
 type charProperty struct {
@@ -88,6 +130,27 @@ func (cp *charProperty) getCharInfo(code_point uint16) (uint32, uint32, uint32, 
 	group := (v >> 30) & 0b1
 	invoke := (v >> 31) & 0b1
 	return default_type, char_type, char_count, group, invoke
+}
+
+func (cp *charProperty) getGroupLength(s []byte, default_type uint32, max_count uint32) int {
+	var i int
+	var char_count uint32
+
+	for i < len(s) {
+		ch16, ln := utf8ToUcs2(s, i)
+		_, t, _, _, _ := cp.getCharInfo(ch16)
+
+		if ((1 << default_type) & t) != 0 {
+			i += ln
+			char_count += 1
+			if max_count != 0 && max_count == char_count {
+				break
+			}
+		} else {
+			break
+		}
+	}
+	return i
 }
 
 // MecabDic
