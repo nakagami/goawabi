@@ -85,3 +85,24 @@ func TestMecabDic(t *testing.T) {
 		t.Errorf("sys.dic is incollect size %d", m.dic_size)
 	}
 }
+
+func TestLookup(t *testing.T) {
+	mecabrc_map, _ := get_mecabrc_map("")
+	path := get_dic_path(mecabrc_map, "sys.dic")
+	m, err := newMecabDic(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s := []byte("すもももももももものうち")
+
+	r := m.commonPrefixSearch(s)
+	if len(r) != 3 {
+		t.Errorf("commonPrefixSearch() failed")
+	}
+
+	entries := m.lookup(s)
+	if len(entries) != 9 {
+		t.Errorf("lookup() failed")
+	}
+}
