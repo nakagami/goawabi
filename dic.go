@@ -272,14 +272,24 @@ func (m *mecabDic) commonPrefixSearch(s []byte) [][2]int32 {
 	return results
 }
 
-func (m *mecabDic) getEntriesByIndex(idx int, count int, s string) []DicEntry {
-	results := make([]DicEntry, 0)
-	// TODO:
+func (m *mecabDic) getEntriesByIndex(idx int, count int, s string) []*DicEntry {
+	results := make([]*DicEntry, 0)
+	for i:= 0; i < count; i++ {
+		d := new(DicEntry)
+		offset := m.token_offset + (idx + 1) * 16
+		d.lc_attr = binary.LittleEndian.Uint16(m.data[offset:])
+		d.rc_attr = binary.LittleEndian.Uint16(m.data[offset+2:])
+		d.posid = binary.LittleEndian.Uint16(m.data[offset+4:])
+		d.wcost = int16(binary.LittleEndian.Uint16(m.data[offset+6:]))
+		feature := int(binary.LittleEndian.Uint32(m.data[offset+8:]))
+		d.feature = c_str_to_string(m.data[m.feature_offset + feature:])
+		results = append(results, d)
+	}
 
 	return results
 }
 
-func (m *mecabDic) getEntries(result int, s string) []DicEntry {
+func (m *mecabDic) getEntries(result int, s string) []*DicEntry {
 	return m.getEntriesByIndex(result>>8, result&0xff, s)
 }
 
