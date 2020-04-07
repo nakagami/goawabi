@@ -52,8 +52,7 @@ func assertGetCharInfo(t *testing.T, cp *charProperty, code_point uint16, defaul
 
 func TestCharPropery(t *testing.T) {
 	mecabrc_map, _ := get_mecabrc_map("")
-	path := get_dic_path(mecabrc_map, "char.bin")
-	cp, err := newCharProperty(path)
+	cp, err := newCharProperty(get_dic_path(mecabrc_map, "char.bin"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -76,8 +75,7 @@ func TestCharPropery(t *testing.T) {
 
 func TestMecabDic(t *testing.T) {
 	mecabrc_map, _ := get_mecabrc_map("")
-	path := get_dic_path(mecabrc_map, "sys.dic")
-	m, err := newMecabDic(path)
+	m, err := newMecabDic(get_dic_path(mecabrc_map, "sys.dic"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,8 +86,7 @@ func TestMecabDic(t *testing.T) {
 
 func TestLookup(t *testing.T) {
 	mecabrc_map, _ := get_mecabrc_map("")
-	path := get_dic_path(mecabrc_map, "sys.dic")
-	m, err := newMecabDic(path)
+	m, err := newMecabDic(get_dic_path(mecabrc_map, "sys.dic"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -104,5 +101,29 @@ func TestLookup(t *testing.T) {
 	entries := m.lookup(s)
 	if len(entries) != 9 {
 		t.Errorf("lookup() failed")
+	}
+}
+
+func TestLookupUnknowns(t *testing.T) {
+	mecabrc_map, _ := get_mecabrc_map("")
+	unk_dic, err := newMecabDic(get_dic_path(mecabrc_map, "unk.dic"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	cp, err := newCharProperty(get_dic_path(mecabrc_map, "char.bin"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if unk_dic.exactMatchSearch([]byte("SPACE")) != 9729 {
+		t.Errorf("exactMatchSearch() failed")
+	}
+
+	entries, invoke := unk_dic.lookupUnknowns([]byte("１９６７年"), cp)
+	if len(entries) != 1 || invoke != true {
+		t.Errorf("lookupUnknowns() failed")
+	}
+	if entries[0].original != "１９６７" {
+		t.Errorf("lookupUnknowns() failed:%s", entries[0].original)
 	}
 }
