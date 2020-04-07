@@ -153,6 +153,16 @@ func (cp *charProperty) getGroupLength(s []byte, default_type uint32, max_count 
 	return i
 }
 
+func (cp *charProperty) getCountLength(s []byte, count int) int {
+	var i int
+
+	for j := 0; j < count; j++ {
+		_, ln := utf8ToUcs2(s, i)
+		i += ln
+	}
+	return i
+}
+
 // MecabDic
 
 type mecabDic struct {
