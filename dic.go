@@ -162,7 +162,7 @@ func (cp *charProperty) getCountLength(s []byte, count int) int {
 	return i
 }
 
-func (cp *charProperty) getUnknownLength(s []byte) (uint32, []int, bool) {
+func (cp *charProperty) getUnknownLengths(s []byte) (uint32, []int, bool) {
 	// get unknown word bytes length vector
 	ln_list := make([]int, 0)
 	ch16, _ := utf8ToUcs2(s, 0)
@@ -277,6 +277,7 @@ func (m *mecabDic) getEntriesByIndex(idx int, count int, s string) []*DicEntry {
 	for i := 0; i < count; i++ {
 		d := new(DicEntry)
 		offset := m.token_offset + (idx+1)*16
+		d.original = s
 		d.lc_attr = binary.LittleEndian.Uint16(m.data[offset:])
 		d.rc_attr = binary.LittleEndian.Uint16(m.data[offset+2:])
 		d.posid = binary.LittleEndian.Uint16(m.data[offset+4:])
@@ -300,11 +301,22 @@ func (m *mecabDic) lookup(s []byte) []*DicEntry {
 		result, ln := v[0], v[1]
 		index := int(result >> 8)
 		count := int(result & 0xff)
-		new_results := m.getEntriesByIndex(index, count, string(s[:ln]))
-		results = append(results, new_results...)
+		newResults := m.getEntriesByIndex(index, count, string(s[:ln]))
+		results = append(results, newResults...)
 	}
 
 	return results
+}
+
+func (m *mecabDic) lookupUnknowns(s []byte, cp *charProperty) ([]*DicEntry, bool) {
+	default_type, ln_list, invoke := cp.getUnknownLengths(s)
+	index := m.exactMatchSearch([]byte(cp.category_names[int(default_type)]))
+	results := make([]*DicEntry, 0)
+	for _, ln := range ln_list {
+		newResults := m.getEntries(int(index), string(s[:ln]))
+		results = append(results, newResults...)
+	}
+	return results, invoke
 }
 
 // Matrix
