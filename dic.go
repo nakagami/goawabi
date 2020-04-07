@@ -274,15 +274,15 @@ func (m *mecabDic) commonPrefixSearch(s []byte) [][2]int32 {
 
 func (m *mecabDic) getEntriesByIndex(idx int, count int, s string) []*DicEntry {
 	results := make([]*DicEntry, 0)
-	for i:= 0; i < count; i++ {
+	for i := 0; i < count; i++ {
 		d := new(DicEntry)
-		offset := m.token_offset + (idx + 1) * 16
+		offset := m.token_offset + (idx+1)*16
 		d.lc_attr = binary.LittleEndian.Uint16(m.data[offset:])
 		d.rc_attr = binary.LittleEndian.Uint16(m.data[offset+2:])
 		d.posid = binary.LittleEndian.Uint16(m.data[offset+4:])
 		d.wcost = int16(binary.LittleEndian.Uint16(m.data[offset+6:]))
 		feature := int(binary.LittleEndian.Uint32(m.data[offset+8:]))
-		d.feature = c_str_to_string(m.data[m.feature_offset + feature:])
+		d.feature = c_str_to_string(m.data[m.feature_offset+feature:])
 		results = append(results, d)
 	}
 
@@ -291,6 +291,20 @@ func (m *mecabDic) getEntriesByIndex(idx int, count int, s string) []*DicEntry {
 
 func (m *mecabDic) getEntries(result int, s string) []*DicEntry {
 	return m.getEntriesByIndex(result>>8, result&0xff, s)
+}
+
+func (m *mecabDic) lookup(s []byte) []*DicEntry {
+	results := make([]*DicEntry, 0)
+
+	for _, v := range m.commonPrefixSearch(s) {
+		result, ln := v[0], v[1]
+		index := int(result >> 8)
+		count := int(result & 0xff)
+		new_results := m.getEntriesByIndex(index, count, string(s[:ln]))
+		results = append(results, new_results...)
+	}
+
+	return results
 }
 
 // Matrix
