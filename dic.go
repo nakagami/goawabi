@@ -272,6 +272,17 @@ func (m *mecabDic) commonPrefixSearch(s []byte) [][2]int32 {
 	return results
 }
 
+func (m *mecabDic) getEntriesByIndex(idx int, count int, s string) []DicEntry {
+	results := make([]DicEntry, 0)
+	// TODO:
+
+	return results
+}
+
+func (m *mecabDic) getEntries(result int, s string) []DicEntry {
+	return m.getEntriesByIndex(result>>8, result&0xff, s)
+}
+
 // Matrix
 
 type matrix struct {
