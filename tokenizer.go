@@ -25,9 +25,46 @@ SOFTWARE.
 package goawabi
 
 type Tokenizer struct {
-	sys_dic       *mecabDic
-	user_dic      *mecabDic
-	char_property *charProperty
-	unk_dic       *mecabDic
-	m             *matrix
+	sys_dic  *mecabDic
+	user_dic *mecabDic
+	cp       *charProperty
+	unk_dic  *mecabDic
+	m        *matrix
+}
+
+func NewTokenizer(path string) (*Tokenizer, error) {
+	tok := new(Tokenizer)
+	mecabrc_map, _ := get_mecabrc_map(path)
+	sys_dic, err := newMecabDic(get_dic_path(mecabrc_map, "sys.dic"))
+	if err != nil {
+		return tok, err
+	}
+	tok.sys_dic = sys_dic
+
+	if val, ok := mecabrc_map["userdic"]; ok {
+		user_dic, err := newMecabDic(val)
+		if err != nil {
+			return tok, err
+		}
+		tok.user_dic = user_dic
+	}
+	cp, err := newCharProperty(get_dic_path(mecabrc_map, "char.bin"))
+	if err != nil {
+		return tok, err
+	}
+
+	tok.cp = cp
+
+	unk_dic, err := newMecabDic(get_dic_path(mecabrc_map, "unk.dic"))
+	if err != nil {
+		return tok, err
+	}
+	tok.unk_dic = unk_dic
+	m, err := newMatrix(get_dic_path(mecabrc_map, "matrix.bin"))
+	if err != nil {
+		return tok, err
+	}
+	tok.m = m
+
+	return tok, err
 }

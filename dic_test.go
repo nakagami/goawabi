@@ -75,30 +75,30 @@ func TestCharPropery(t *testing.T) {
 
 func TestMecabDic(t *testing.T) {
 	mecabrc_map, _ := get_mecabrc_map("")
-	m, err := newMecabDic(get_dic_path(mecabrc_map, "sys.dic"))
+	sys_dic, err := newMecabDic(get_dic_path(mecabrc_map, "sys.dic"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if m.dic_size != 49199027 {
-		t.Errorf("sys.dic is incollect size %d", m.dic_size)
+	if sys_dic.dic_size != 49199027 {
+		t.Errorf("sys.dic is incollect size %d", sys_dic.dic_size)
 	}
 }
 
 func TestLookup(t *testing.T) {
 	mecabrc_map, _ := get_mecabrc_map("")
-	m, err := newMecabDic(get_dic_path(mecabrc_map, "sys.dic"))
+	sys_dic, err := newMecabDic(get_dic_path(mecabrc_map, "sys.dic"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	s := []byte("すもももももももものうち")
 
-	r := m.commonPrefixSearch(s)
+	r := sys_dic.commonPrefixSearch(s)
 	if len(r) != 3 {
 		t.Errorf("commonPrefixSearch() failed")
 	}
 
-	entries := m.lookup(s)
+	entries := sys_dic.lookup(s)
 	if len(entries) != 9 {
 		t.Errorf("lookup() failed")
 	}
