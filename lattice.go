@@ -95,9 +95,9 @@ func (node *Node) isEos() bool {
 	return node.entry == nil && node.pos != 0
 }
 
-func (node *Node) nodeLen() int {
+func (node *Node) nodeLen() int32 {
 	if node.entry == nil {
-		return len(node.entry.original)
+		return int32(len(node.entry.original))
 	}
 
 	return 1 // BOS or EOS
@@ -126,3 +126,41 @@ func newLattice(size int) (lat *Lattice, err error) {
 
 	return lat, err
 }
+
+func (lat *Lattice) add(node *Node, m *matrix) {
+	min_cost := node.min_cost
+	best_node := lat.enodes[lat.p][0]
+
+	for _, enode := range lat.enodes[lat.p] {
+		cost := enode.min_cost + m.getTransCost(int(enode.right_id), int(enode.left_id))
+		if cost < min_cost {
+			min_cost = cost
+			best_node = enode
+		}
+	}
+
+	node.min_cost = min_cost + node.cost
+	node.back_index = best_node.index
+	node.back_pos = best_node.pos
+	node.pos = lat.p
+	node.epos = lat.p + node.nodeLen()
+
+	node.index = int32(len(lat.snodes[lat.p]))
+
+	node_pos := node.pos
+	node_epos := node.epos
+	lat.snodes[node_pos] = append(lat.snodes[node_pos], node)
+	lat.enodes[node_epos] = append(lat.enodes[node_epos], node)
+}
+
+
+/*
+func (lat *Lattice) forward() int {
+}
+
+func (lat *Lattice) end(m *matrix) int {
+}
+
+func (lat *Lattice) backward() []*Node {
+}
+*/

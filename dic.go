@@ -348,7 +348,7 @@ func newMatrix(path string) (m *matrix, err error) {
 	return m, err
 }
 
-func (m *matrix) getTransCost(id1 int, id2 int) int {
+func (m *matrix) getTransCost(id1 int, id2 int) int32 {
 	i := (id2*m.lsize+id1)*2 + 4
-	return int(int16(binary.LittleEndian.Uint16(m.data[i:])))
+	return int32(int16(binary.LittleEndian.Uint16(m.data[i:])))
 }
