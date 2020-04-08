@@ -162,10 +162,13 @@ func (lat *Lattice) forward() int {
 	return int(lat.p - old_p)
 }
 
-/*
-func (lat *Lattice) end(m *matrix) int {
+func (lat *Lattice) end(m *matrix) {
+	lat.add(newEos(lat.p), m)
+	lat.snodes = lat.snodes[:lat.p+1]
+	lat.enodes = lat.enodes[:lat.p+2]
 }
 
+/*
 func (lat *Lattice) backward() []*Node {
 }
 */
