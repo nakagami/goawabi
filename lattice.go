@@ -168,7 +168,21 @@ func (lat *Lattice) end(m *matrix) {
 	lat.enodes = lat.enodes[:lat.p+2]
 }
 
-/*
 func (lat *Lattice) backward() []*Node {
+	shortest_path := make([]*Node, 0)
+
+	pos := int32(len(lat.snodes)) - 1
+	var index int32
+	for pos >= 0 {
+		node := lat.snodes[pos][index]
+		index = node.back_index
+		pos = node.back_pos
+		shortest_path = append(shortest_path, node)
+	}
+
+	reversed := make([]*Node, len(shortest_path))
+	for i, node := range shortest_path {
+		reversed[i] = node
+	}
+	return reversed
 }
-*/
