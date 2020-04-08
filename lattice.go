@@ -106,7 +106,23 @@ func (node *Node) nodeLen() int {
 // Lattice
 
 type Lattice struct {
-	snodes [][]Node
-	enodes [][]Node
+	snodes [][]*Node
+	enodes [][]*Node
 	p      int32
+}
+
+func newLattice(size int) (lat *Lattice, err error) {
+	lat = new(Lattice)
+	lat.snodes = make([][]*Node, size+2)
+	lat.enodes = make([][]*Node, size+2)
+	for i := 0; i < size+2; i++ {
+		lat.snodes[i] = make([]*Node, 0)
+		lat.enodes[i] = make([]*Node, 0)
+	}
+	bos := newBos()
+	lat.snodes[0] = append(lat.snodes[0], bos)
+	lat.enodes[1] = append(lat.snodes[1], bos)
+	lat.p = 1
+
+	return lat, err
 }
