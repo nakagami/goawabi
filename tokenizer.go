@@ -68,3 +68,16 @@ func NewTokenizer(path string) (*Tokenizer, error) {
 
 	return tok, err
 }
+
+func (tok *Tokenizer) buildLattice(s string) (*Lattice, error) {
+	lat, err := newLattice(len(s))
+	// TODO:
+
+	return lat, err
+}
+
+func (tok *Tokenizer) Tokenize() ([][2]string, error) {
+	morphemes := make([][2]string, 0)
+	// TODO:
+	return morphemes, nil
+}
