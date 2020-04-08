@@ -153,11 +153,16 @@ func (lat *Lattice) add(node *Node, m *matrix) {
 	lat.enodes[node_epos] = append(lat.enodes[node_epos], node)
 }
 
-
-/*
 func (lat *Lattice) forward() int {
+	old_p := lat.p
+	lat.p += 1
+	for len(lat.enodes[lat.p]) == 0 {
+		lat.p += 1
+	}
+	return int(lat.p - old_p)
 }
 
+/*
 func (lat *Lattice) end(m *matrix) int {
 }
 
