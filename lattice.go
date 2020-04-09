@@ -121,7 +121,7 @@ func newLattice(size int) (lat *Lattice, err error) {
 	}
 	bos := newBos()
 	lat.snodes[0] = append(lat.snodes[0], bos)
-	lat.enodes[1] = append(lat.snodes[1], bos)
+	lat.enodes[1] = append(lat.enodes[1], bos)
 	lat.p = 1
 
 	return lat, err
@@ -132,7 +132,7 @@ func (lat *Lattice) add(node *Node, m *matrix) {
 	best_node := lat.enodes[lat.p][0]
 
 	for _, enode := range lat.enodes[lat.p] {
-		cost := enode.min_cost + m.getTransCost(int(enode.right_id), int(enode.left_id))
+		cost := enode.min_cost + m.getTransCost(int(enode.right_id), int(node.left_id))
 		if cost < min_cost {
 			min_cost = cost
 			best_node = enode
