@@ -96,10 +96,9 @@ func (node *Node) isEos() bool {
 }
 
 func (node *Node) nodeLen() int32 {
-	if node.entry == nil {
+	if node.entry != nil {
 		return int32(len(node.entry.original))
 	}
-
 	return 1 // BOS or EOS
 }
 
