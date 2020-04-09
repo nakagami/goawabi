@@ -69,10 +69,46 @@ func NewTokenizer(path string) (*Tokenizer, error) {
 	return tok, err
 }
 
-func (tok *Tokenizer) buildLattice(s string) (*Lattice, error) {
+func (tok *Tokenizer) buildLattice(str string) (*Lattice, error) {
+	s := []byte(str)
 	lat, err := newLattice(len(s))
-	// TODO:
+	pos := 0
+	for pos < len(s) {
+		matched := false
 
+		// user_dic
+		if tok.user_dic != nil {
+			user_entries := tok.user_dic.lookup(s[pos:])
+			if len(user_entries) > 0 {
+				for _, entry := range user_entries {
+					lat.add(newNode(entry), tok.m)
+				}
+				matched = true
+			}
+		}
+
+		// sys_dic
+		sys_entries := tok.sys_dic.lookup(s[pos:])
+		if len(sys_entries) > 0 {
+			for _, entry := range sys_entries {
+				lat.add(newNode(entry), tok.m)
+			}
+			matched = true
+		}
+
+		// unknown
+		unk_entries, invoke := tok.unk_dic.lookupUnknowns(s[pos:], tok.cp)
+		if invoke || !matched {
+			for _, entry := range unk_entries {
+				lat.add(newNode(entry), tok.m)
+			}
+
+		}
+
+		pos += lat.forward()
+	}
+
+	lat.end(tok.m)
 	return lat, err
 }
 
