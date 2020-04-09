@@ -105,7 +105,7 @@ func newCharProperty(path string) (cp *charProperty, err error) {
 	}
 	defer f.Close()
 	finfo, _ := f.Stat()
-	data, err := syscall.Mmap(int(f.Fd()), 0, int(finfo.Size()), syscall.PROT_READ, syscall.MAP_SHARED)
+	data, err := syscall.Mmap(int(f.Fd()), 0, int(finfo.Size()), syscall.PROT_READ, syscall.MAP_PRIVATE)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +196,7 @@ func newMecabDic(path string) (m *mecabDic, err error) {
 	}
 	defer f.Close()
 	finfo, _ := f.Stat()
-	data, err := syscall.Mmap(int(f.Fd()), 0, int(finfo.Size()), syscall.PROT_READ, syscall.MAP_SHARED)
+	data, err := syscall.Mmap(int(f.Fd()), 0, int(finfo.Size()), syscall.PROT_READ, syscall.MAP_PRIVATE)
 	if err != nil {
 		return nil, err
 	}
@@ -335,7 +335,7 @@ func newMatrix(path string) (m *matrix, err error) {
 	}
 	defer f.Close()
 	finfo, _ := f.Stat()
-	data, err := syscall.Mmap(int(f.Fd()), 0, int(finfo.Size()), syscall.PROT_READ, syscall.MAP_SHARED)
+	data, err := syscall.Mmap(int(f.Fd()), 0, int(finfo.Size()), syscall.PROT_READ, syscall.MAP_PRIVATE)
 	if err != nil {
 		return nil, err
 	}
