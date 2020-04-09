@@ -118,11 +118,11 @@ func (tok *Tokenizer) Tokenize(str string) ([][2]string, error) {
 		return nil, err
 	}
 	nodes := lat.backward()
-	nodes = nodes[1 : len(nodes)-2]
-	morphemes := make([][2]string, len(nodes))
-	for i := 0; i < len(nodes); i++ {
-		morphemes[i][0] = nodes[i].entry.original
-		morphemes[i][1] = nodes[i].entry.feature
+
+	morphemes := make([][2]string, 0)
+
+	for i := 1; i < len(nodes)-1; i++ {
+		morphemes = append(morphemes, [2]string{nodes[i].entry.original, nodes[i].entry.feature})
 	}
 
 	return morphemes, nil

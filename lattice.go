@@ -182,9 +182,8 @@ func (lat *Lattice) backward() []*Node {
 		shortest_path = append(shortest_path, node)
 	}
 
-	reversed := make([]*Node, len(shortest_path))
-	for i, node := range shortest_path {
-		reversed[i] = node
+	for i, j := 0, len(shortest_path)-1; i < j; i, j = i+1, j-1 {
+		shortest_path[i], shortest_path[j] = shortest_path[j], shortest_path[i]
 	}
-	return reversed
+	return shortest_path
 }
