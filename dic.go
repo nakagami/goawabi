@@ -276,7 +276,7 @@ func (m *mecabDic) getEntriesByIndex(idx int, count int, s string) []*DicEntry {
 	results := make([]*DicEntry, 0)
 	for i := 0; i < count; i++ {
 		d := new(DicEntry)
-		offset := m.token_offset + (idx+1)*16
+		offset := m.token_offset + (idx+i)*16
 		d.original = s
 		d.lc_attr = binary.LittleEndian.Uint16(m.data[offset:])
 		d.rc_attr = binary.LittleEndian.Uint16(m.data[offset+2:])
