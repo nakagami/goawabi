@@ -2,7 +2,7 @@
 
 `goawabi` is a morphological analyzer using mecab dictionary, written in Go.
 
-See also python wrapper `awabi` https://github.com/nakagami/awabi .
+See also an original Rust implementation `awabi` https://github.com/nakagami/awabi .
 
 ## Requirements and how to install
 
