@@ -50,7 +50,7 @@ func TestTokenizer(t *testing.T) {
 	}
 	for i, m := range morphemes {
 		if results1[i][0] != m[0] || results1[i][1] != m[1] {
-			t.Errorf("Tokenize() failed:%s,%s", m[0], m[1]);
+			t.Errorf("Tokenize() failed:%s,%s", m[0], m[1])
 		}
 	}
 }
