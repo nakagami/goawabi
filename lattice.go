@@ -228,10 +228,18 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 		panic("backwardAstar(): Invalid lattice")
 	}
 
-	bh := &backwardPathHeap{}
-	heap.Init(bh)
+	pq := &backwardPathHeap{}
+	heap.Init(pq)
+	bp, _ := newBackwardPath(node, nil, m)
+	pq.Push(bp)
 
-	// TODO:
+	for pq.Len() > 0 && n > 0 {
+		if bp.isComplete() {
+			// TODO:
+		} else {
+			// TODO:
+		}
+	}
 
 	return pathes
 }
