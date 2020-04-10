@@ -192,33 +192,50 @@ func (lat *Lattice) backward() []*Node {
 	return shortest_path
 }
 
-// Priority queue and N best results
+// backward path for N-best A*
 
-type backPath struct {
+type backwardPath struct {
 	cost_from_bos int32
 	cost_from_eos int32
 	back_path     []*Node
 }
 
-type backPathHeap []backPath
+func newBackPath(node *Node, right_path *backwardPath, m *matrix) (bp *backwardPath, err error) {
+	bp = new(backwardPath)
 
-func (h backPathHeap) Len() int {
+	// TODO:
+	return bp, err
+}
+
+func (bp *backwardPath) totalCost() int32 {
+	return bp.cost_from_bos + bp.cost_from_eos
+}
+
+func (bp *backwardPath) isComplete() bool {
+	return bp.back_path[len(bp.back_path)-1].isBos()
+}
+
+// Priority queue and N best results
+
+type backwardPathHeap []*backwardPath
+
+func (h backwardPathHeap) Len() int {
 	return len(h)
 }
 
-func (h backPathHeap) Less(i, j int) bool {
-	return h[i].cost_from_bos+h[i].cost_from_eos < h[j].cost_from_bos+h[j].cost_from_eos
+func (h backwardPathHeap) Less(i, j int) bool {
+	return h[i].totalCost() < h[j].totalCost()
 }
 
-func (h backPathHeap) Swap(i, j int) {
+func (h backwardPathHeap) Swap(i, j int) {
 	h[i], h[j] = h[j], h[i]
 }
 
-func (h *backPathHeap) Push(x interface{}) {
-	*h = append(*h, x.(backPath))
+func (h *backwardPathHeap) Push(x interface{}) {
+	*h = append(*h, x.(*backwardPath))
 }
 
-func (h *backPathHeap) Pop() interface{} {
+func (h *backwardPathHeap) Pop() interface{} {
 	old := *h
 	n := len(old)
 	x := old[n-1]
@@ -234,7 +251,7 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 		panic("backwardAstar(): Invalid lattice")
 	}
 
-	bh := &backPathHeap{}
+	bh := &backwardPathHeap{}
 	heap.Init(bh)
 
 	// TODO:
