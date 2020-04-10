@@ -228,8 +228,15 @@ func (h *backPathHeap) Pop() interface{} {
 
 func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 	pathes := make([][]*Node, n)
+	epos := len(lat.enodes) - 1
+	node := lat.enodes[epos][0]
+	if node.isEos() {
+		panic("backwardAstar(): Invalid lattice")
+	}
+
 	bh := &backPathHeap{}
-	heap
+	heap.Init(bh)
+
 	// TODO:
 
 	return pathes
