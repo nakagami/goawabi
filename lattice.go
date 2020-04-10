@@ -192,29 +192,6 @@ func (lat *Lattice) backward() []*Node {
 	return shortest_path
 }
 
-// backward path for N-best A*
-
-type backwardPath struct {
-	cost_from_bos int32
-	cost_from_eos int32
-	back_path     []*Node
-}
-
-func newBackPath(node *Node, right_path *backwardPath, m *matrix) (bp *backwardPath, err error) {
-	bp = new(backwardPath)
-
-	// TODO:
-	return bp, err
-}
-
-func (bp *backwardPath) totalCost() int32 {
-	return bp.cost_from_bos + bp.cost_from_eos
-}
-
-func (bp *backwardPath) isComplete() bool {
-	return bp.back_path[len(bp.back_path)-1].isBos()
-}
-
 // Priority queue and N best results
 
 type backwardPathHeap []*backwardPath
@@ -257,4 +234,42 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 	// TODO:
 
 	return pathes
+}
+
+// backward path for N-best A*
+
+type backwardPath struct {
+	cost_from_bos int32
+	cost_from_eos int32
+	back_path     []*Node
+}
+
+func newBackwardPath(node *Node, right_path *backwardPath, m *matrix) (bp *backwardPath, err error) {
+	bp = new(backwardPath)
+	bp.cost_from_bos = node.min_cost
+	bp.cost_from_eos = 0
+	bp.back_path = make([]*Node, 0)
+
+	if right_path != nil {
+		neighbor_node := right_path.back_path[len(right_path.back_path)-1]
+		bp.cost_from_eos = right_path.cost_from_eos + neighbor_node.cost + m.getTransCost(int(node.right_id), int(neighbor_node.left_id))
+		for _, n := range right_path.back_path {
+			bp.back_path = append(bp.back_path, n)
+		}
+	} else {
+		if node.isEos() {
+			panic("newBackwardPath(): Invalid lattice")
+		}
+	}
+
+	bp.back_path = append(bp.back_path, node)
+	return bp, err
+}
+
+func (bp *backwardPath) totalCost() int32 {
+	return bp.cost_from_bos + bp.cost_from_eos
+}
+
+func (bp *backwardPath) isComplete() bool {
+	return bp.back_path[len(bp.back_path)-1].isBos()
 }
