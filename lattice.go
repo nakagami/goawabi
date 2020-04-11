@@ -106,6 +106,12 @@ func (node *Node) nodeLen() int32 {
 	return 1 // BOS or EOS
 }
 
+func reverseNodes(nodes []*Node) {
+	for i, j := 0, len(nodes)-1; i < j; i, j = i+1, j-1 {
+		nodes[i], nodes[j] = nodes[j], nodes[i]
+	}
+}
+
 // Lattice
 
 type Lattice struct {
@@ -186,9 +192,7 @@ func (lat *Lattice) backward() []*Node {
 		shortest_path = append(shortest_path, node)
 	}
 
-	for i, j := 0, len(shortest_path)-1; i < j; i, j = i+1, j-1 {
-		shortest_path[i], shortest_path[j] = shortest_path[j], shortest_path[i]
-	}
+	reverseNodes(shortest_path)
 	return shortest_path
 }
 
