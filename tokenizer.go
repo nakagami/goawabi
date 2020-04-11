@@ -127,3 +127,22 @@ func (tok *Tokenizer) Tokenize(str string) ([][2]string, error) {
 
 	return morphemes, nil
 }
+
+func (tok *Tokenizer) TokenizeNBest(str string, n int) ([][][2]string, error) {
+	lat, err := tok.buildLattice(str)
+	if err != nil {
+		return nil, err
+	}
+
+	nodes_list := lat.backwardAstar(n, tok.m)
+	morphemes_list := make([][][2]string, 0)
+	for _, nodes := range nodes_list {
+		morphemes := make([][2]string, 0)
+		for i := 1; i < len(nodes)-1; i++ {
+			morphemes = append(morphemes, [2]string{nodes[i].entry.original, nodes[i].entry.feature})
+		}
+		morphemes_list = append(morphemes_list, morphemes)
+	}
+
+	return morphemes_list, nil
+}
