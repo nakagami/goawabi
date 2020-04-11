@@ -240,7 +240,8 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 	for pq.Len() > 0 && n > 0 {
 		bp := pq.Pop()
 		if bp.isComplete() {
-			path := make([]*Node, len(bp.back_path))
+			buf := make([]*Node, len(bp.back_path))
+			path := copy(buf, bp.back_path)
 			reverseNodes(path)
 			pathes.Push(path)
 			n -= 1
