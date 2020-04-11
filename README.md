@@ -53,3 +53,8 @@ EOS
 うち	名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 EOS
 ```
+
+## See also
+
+- awabi https://github.com/nakagami/awabi Rust implementation
+- pyawabi https://github.com/nakagami/pyawabi Python wrapper
