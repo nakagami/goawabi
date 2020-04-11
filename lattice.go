@@ -236,10 +236,10 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 	pq := &backwardPathHeap{}
 	heap.Init(pq)
 	bp, _ := newBackwardPath(node, nil, m)
-	pq.Push(bp)
+	heap.Push(pq, bp)
 
 	for pq.Len() > 0 && n > 0 {
-		bp := pq.Pop().(*backwardPath)
+		bp := heap.Pop(pq).(*backwardPath)
 		// fmt.Println("Pop()")
 		// bp.printPath()
 		if bp.isComplete() {
@@ -255,7 +255,7 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 				bp, _ := newBackwardPath(node, bp, m)
 				// fmt.Println("Push()")
 				// bp.printPath()
-				pq.Push(bp)
+				heap.Push(pq, bp)
 			}
 		}
 	}
