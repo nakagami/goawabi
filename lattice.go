@@ -240,6 +240,8 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 
 	for pq.Len() > 0 && n > 0 {
 		bp := pq.Pop().(*backwardPath)
+		// fmt.Println("Pop()")
+		// bp.printPath()
 		if bp.isComplete() {
 			path := make([]*Node, len(bp.back_path))
 			copy(path, bp.back_path)
@@ -251,6 +253,7 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 			epos := new_node.epos - new_node.nodeLen()
 			for _, node := range lat.enodes[epos] {
 				bp, _ := newBackwardPath(node, bp, m)
+				// fmt.Println("Push()")
 				// bp.printPath()
 				pq.Push(bp)
 			}
@@ -297,7 +300,7 @@ func (bp *backwardPath) printPath() {
 			fmt.Printf("\tBOS\n")
 
 		} else if node.isEos() {
-			fmt.Printf("\tBOS\n")
+			fmt.Printf("\tEOS\n")
 		} else {
 			fmt.Printf("\t%s\t%s\n", node.entry.original, node.entry.feature)
 		}
