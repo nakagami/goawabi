@@ -228,7 +228,7 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 	pathes := make([][]*Node, n)
 	epos := len(lat.enodes) - 1
 	node := lat.enodes[epos][0]
-	if node.isEos() {
+	if !node.isEos() {
 		panic("backwardAstar(): Invalid lattice")
 	}
 
@@ -279,7 +279,7 @@ func newBackwardPath(node *Node, right_path *backwardPath, m *matrix) (bp *backw
 			bp.back_path = append(bp.back_path, n)
 		}
 	} else {
-		if node.isEos() {
+		if !node.isEos() {
 			panic("newBackwardPath(): Invalid lattice")
 		}
 	}

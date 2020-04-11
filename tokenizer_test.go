@@ -78,7 +78,6 @@ func TestTokenizer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	for i, morphemes := range morphemes_list {
 		for j, m := range morphemes {
 			if results[i][j][0] != m[0] || results[i][j][1] != m[1] {
