@@ -26,6 +26,7 @@ package goawabi
 
 import (
 	"container/heap"
+	"fmt"
 )
 
 // Node
@@ -286,6 +287,12 @@ func newBackwardPath(node *Node, right_path *backwardPath, m *matrix) (bp *backw
 
 	bp.back_path = append(bp.back_path, node)
 	return bp, err
+}
+
+func (bp *backwardPath) printEntry() {
+	for _, node := range bp.back_path {
+		fmt.Printf("%s\t%s\n", node.entry.original, node.entry.feature)
+	}
 }
 
 func (bp *backwardPath) totalCost() int32 {
