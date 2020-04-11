@@ -20,6 +20,7 @@ func main() {
 	var (
 		n = flag.Int("N", 1, "N best")
 	)
+	flag.Parse()
 
 	tokenizer, err := goawabi.NewTokenizer("")
 	if err != nil {
