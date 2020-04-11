@@ -225,7 +225,7 @@ func (h *backwardPathHeap) Pop() interface{} {
 }
 
 func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
-	pathes := make([][]*Node, n)
+	pathes := make([][]*Node, 0)
 	epos := len(lat.enodes) - 1
 	node := lat.enodes[epos][0]
 	if !node.isEos() {
