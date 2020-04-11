@@ -238,10 +238,19 @@ func (lat *Lattice) backwardAstar(n int, m *matrix) [][]*Node {
 	pq.Push(bp)
 
 	for pq.Len() > 0 && n > 0 {
+		bp := pq.Pop()
 		if bp.isComplete() {
-			// TODO:
+			path := make([]*Node, len(bp.back_path))
+			reverseNodes(path)
+			pathes.Push(path)
+			n -= 1
 		} else {
-			// TODO:
+			new_node = bp.back_path[len(bp.back_path)-1]
+			epos := new_nodes.epos - new_node.nodeLen()
+			for _, node := range lat.enodes[epos] {
+				bp, _ := newBackwardPath(node, bp, m)
+				pq.Push(bp)
+			}
 		}
 	}
 
