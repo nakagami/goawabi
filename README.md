@@ -11,6 +11,7 @@ MeCab https://taku910.github.io/mecab/ and related dictionary is required.
 ### Debian/Ubuntu
 ```
 $ sudo apt install mecab
+$ sudo apt install mecab-ipadic-utf8
 $ go get github.com/nakagami/goawabi/cmd/goawabi
 ```
 

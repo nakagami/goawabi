@@ -79,7 +79,7 @@ func TestMecabDic(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if sys_dic.dic_size != 49199027 {
+	if sys_dic.dic_size < 49199027 {
 		t.Errorf("sys.dic is incollect size %d", sys_dic.dic_size)
 	}
 }
