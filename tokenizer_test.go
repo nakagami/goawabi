@@ -85,4 +85,10 @@ func TestTokenizer(t *testing.T) {
 			}
 		}
 	}
+
+	morphemes, err = tokenizer.Tokenize("母はハハハと笑う")
+	if morphemes[2][0] != "ハハハ" {
+		t.Error(morphemes)
+	}
+
 }

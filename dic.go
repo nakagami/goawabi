@@ -30,6 +30,8 @@ import (
 	"syscall"
 )
 
+const MAX_GROUPING_SIZE = 24
+
 type DicEntry struct {
 	original string
 	lc_attr  uint16
@@ -132,7 +134,7 @@ func (cp *charProperty) getCharInfo(code_point uint16) (uint32, uint32, uint32, 
 	return default_type, char_type, char_count, group, invoke
 }
 
-func (cp *charProperty) getGroupLength(s []byte, default_type uint32, max_count int) int {
+func (cp *charProperty) getGroupLength(s []byte, default_type uint32) int {
 	var i, char_count int
 
 	for i < len(s) {
@@ -142,7 +144,7 @@ func (cp *charProperty) getGroupLength(s []byte, default_type uint32, max_count 
 		if ((1 << default_type) & t) != 0 {
 			i += ln
 			char_count += 1
-			if max_count != 0 && max_count == char_count {
+			if char_count == MAX_GROUPING_SIZE {
 				break
 			}
 		} else {
@@ -168,7 +170,7 @@ func (cp *charProperty) getUnknownLengths(s []byte) (uint32, []int, bool) {
 	ch16, _ := utf8ToUcs2(s, 0)
 	default_type, _, count, group, invoke := cp.getCharInfo(ch16)
 	if group != 0 {
-		ln_list = append(ln_list, cp.getGroupLength(s, default_type, int(count)))
+		ln_list = append(ln_list, cp.getGroupLength(s, default_type))
 	} else {
 		ln_list = append(ln_list, cp.getCountLength(s, int(count)))
 	}
