@@ -154,11 +154,19 @@ func (cp *charProperty) getGroupLength(s []byte, default_type uint32) int {
 	return i
 }
 
-func (cp *charProperty) getCountLength(s []byte, count int) int {
+func (cp *charProperty) getCountLength(s []byte, default_type uint32, count int) int {
 	var i int
 
 	for j := 0; j < count; j++ {
-		_, ln := utf8ToUcs2(s, i)
+		if j >= len(s) {
+			return -1
+		}
+		ch16, ln := utf8ToUcs2(s, i)
+		_, t, _, _, _ := cp.getCharInfo(ch16)
+		if ((1 << default_type) & t) == 0 {
+			return -1
+		}
+
 		i += ln
 	}
 	return i
@@ -172,7 +180,13 @@ func (cp *charProperty) getUnknownLengths(s []byte) (uint32, []int, bool) {
 	if group != 0 {
 		ln_list = append(ln_list, cp.getGroupLength(s, default_type))
 	} else {
-		ln_list = append(ln_list, cp.getCountLength(s, int(count)))
+		for n := 0; n < int(count); n++ {
+			ln := cp.getCountLength(s, default_type, n + 1)
+			if ln < 0 {
+				break
+			}
+			ln_list = append(ln_list, ln)
+		}
 	}
 
 	return default_type, ln_list, invoke == 1
