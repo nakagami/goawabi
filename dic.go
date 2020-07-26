@@ -158,7 +158,7 @@ func (cp *charProperty) getCountLength(s []byte, default_type uint32, count int)
 	var i int
 
 	for j := 0; j < count; j++ {
-		if j >= len(s) {
+		if i >= len(s) {
 			return -1
 		}
 		ch16, ln := utf8ToUcs2(s, i)
