@@ -6,7 +6,7 @@ import (
 	"github.com/nakagami/goawabi"
 	"io/ioutil"
 	"os"
-	"strings"
+	"regexp"
 )
 
 func print(morphemes [][2]string) {
@@ -32,20 +32,25 @@ func main() {
 		panic(err)
 	}
 
-	if *n > 1 {
-		morphemes_list, err := tokenizer.TokenizeNBest(strings.TrimSpace(string(input)), *n)
-		if err != nil {
-			panic(err)
-		}
-		for _, m := range morphemes_list {
-			print(m)
+	for _, s := range regexp.MustCompile("\r\n|\n\r|\n|\r").Split(string(input), -1) {
+
+		if *n > 1 {
+			morphemes_list, err := tokenizer.TokenizeNBest(s, *n)
+			if err != nil {
+				panic(err)
+			}
+			for _, m := range morphemes_list {
+				print(m)
+			}
+
+		} else {
+			morphemes, err := tokenizer.Tokenize(s)
+			if err != nil {
+				panic(err)
+			}
+			print(morphemes)
 		}
 
-	} else {
-		morphemes, err := tokenizer.Tokenize(strings.TrimSpace(string(input)))
-		if err != nil {
-			panic(err)
-		}
-		print(morphemes)
 	}
+
 }
