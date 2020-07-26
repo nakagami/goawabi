@@ -179,7 +179,8 @@ func (cp *charProperty) getUnknownLengths(s []byte) (uint32, []int, bool) {
 	default_type, _, count, group, invoke := cp.getCharInfo(ch16)
 	if group != 0 {
 		ln_list = append(ln_list, cp.getGroupLength(s, default_type))
-	} else {
+	}
+	if count != 0 {
 		for n := 0; n < int(count); n++ {
 			ln := cp.getCountLength(s, default_type, n + 1)
 			if ln < 0 {
