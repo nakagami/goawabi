@@ -144,8 +144,8 @@ func (cp *charProperty) getGroupLength(s []byte, default_type uint32) int {
 		if ((1 << default_type) & t) != 0 {
 			i += ln
 			char_count += 1
-			if char_count == MAX_GROUPING_SIZE {
-				break
+			if char_count > MAX_GROUPING_SIZE+1 {
+				return -1
 			}
 		} else {
 			break
@@ -175,19 +175,26 @@ func (cp *charProperty) getCountLength(s []byte, default_type uint32, count int)
 func (cp *charProperty) getUnknownLengths(s []byte) (uint32, []int, bool) {
 	// get unknown word bytes length vector
 	ln_list := make([]int, 0)
-	ch16, _ := utf8ToUcs2(s, 0)
+	ch16, first_ln := utf8ToUcs2(s, 0)
 	default_type, _, count, group, invoke := cp.getCharInfo(ch16)
 	if group != 0 {
-		ln_list = append(ln_list, cp.getGroupLength(s, default_type))
+		ln := cp.getGroupLength(s, default_type)
+		if ln > 0 {
+			ln_list = append(ln_list, ln)
+		}
 	}
 	if count != 0 {
 		for n := 0; n < int(count); n++ {
-			ln := cp.getCountLength(s, default_type, n + 1)
+			ln := cp.getCountLength(s, default_type, n+1)
 			if ln < 0 {
 				break
 			}
 			ln_list = append(ln_list, ln)
 		}
+	}
+
+	if len(ln_list) == 0 {
+		ln_list = append(ln_list, first_ln)
 	}
 
 	return default_type, ln_list, invoke == 1
