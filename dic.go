@@ -334,10 +334,10 @@ func (m *mecabDic) lookup(s []byte) []*DicEntry {
 
 func (m *mecabDic) lookupUnknowns(s []byte, cp *charProperty) ([]*DicEntry, bool) {
 	default_type, ln_list, invoke := cp.getUnknownLengths(s)
-	index := m.exactMatchSearch([]byte(cp.category_names[int(default_type)]))
+	result := m.exactMatchSearch([]byte(cp.category_names[int(default_type)]))
 	results := make([]*DicEntry, 0)
 	for _, ln := range ln_list {
-		newResults := m.getEntries(int(index), string(s[:ln]))
+		newResults := m.getEntries(int(result), string(s[:ln]))
 		results = append(results, newResults...)
 	}
 	return results, invoke
