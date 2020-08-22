@@ -91,4 +91,9 @@ func TestTokenizer(t *testing.T) {
 		t.Error(morphemes)
 	}
 
+	morphemes, err = tokenizer.Tokenize("山嵐は might is right という英語を引いて説諭を加えた")
+	if len(morphemes) != 14 {
+		t.Error(morphemes)
+	}
+
 }
