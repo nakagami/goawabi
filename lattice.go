@@ -42,6 +42,7 @@ type Node struct {
 	min_cost   int32
 	back_pos   int32
 	back_index int32
+	skip       bool
 }
 
 func newBos() *Node {
@@ -56,6 +57,7 @@ func newBos() *Node {
 	node.min_cost = 0
 	node.back_pos = -1
 	node.back_index = -1
+	node.skip = false
 
 	return node
 }
@@ -72,6 +74,7 @@ func newEos(pos int32) *Node {
 	node.min_cost = 0x7FFFFFFF
 	node.back_pos = -1
 	node.back_index = -1
+	node.skip = false
 
 	return node
 }
@@ -88,6 +91,7 @@ func newNode(e *DicEntry) *Node {
 	node.min_cost = 0x7FFFFFFF
 	node.back_pos = -1
 	node.back_index = -1
+	node.skip = e.skip
 
 	return node
 }
@@ -145,10 +149,21 @@ func (lat *Lattice) add(node *Node, m *matrix) {
 	best_node := lat.enodes[lat.p][0]
 
 	for _, enode := range lat.enodes[lat.p] {
-		cost := enode.min_cost + m.getTransCost(int(enode.right_id), int(node.left_id))
-		if cost < min_cost {
-			min_cost = cost
-			best_node = enode
+		if enode.skip {
+			for _, enode2 := range lat.enodes[enode.pos] {
+				cost := enode2.min_cost + m.getTransCost(int(enode2.right_id), int(node.left_id))
+				if cost < min_cost {
+					min_cost = cost
+					best_node = enode2
+				}
+
+			}
+		} else {
+			cost := enode.min_cost + m.getTransCost(int(enode.right_id), int(node.left_id))
+			if cost < min_cost {
+				min_cost = cost
+				best_node = enode
+			}
 		}
 	}
 

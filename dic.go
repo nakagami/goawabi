@@ -39,6 +39,7 @@ type DicEntry struct {
 	posid    uint16
 	wcost    int16
 	feature  string
+	skip     bool
 }
 
 func c_str_to_string(data []byte) string {
@@ -296,7 +297,7 @@ func (m *mecabDic) commonPrefixSearch(s []byte) [][2]int32 {
 	return results
 }
 
-func (m *mecabDic) getEntriesByIndex(idx int, count int, s string) []*DicEntry {
+func (m *mecabDic) getEntriesByIndex(idx int, count int, s string, skip bool) []*DicEntry {
 	results := make([]*DicEntry, 0)
 	for i := 0; i < count; i++ {
 		d := new(DicEntry)
@@ -308,14 +309,15 @@ func (m *mecabDic) getEntriesByIndex(idx int, count int, s string) []*DicEntry {
 		d.wcost = int16(binary.LittleEndian.Uint16(m.data[offset+6:]))
 		feature := int(binary.LittleEndian.Uint32(m.data[offset+8:]))
 		d.feature = c_str_to_string(m.data[m.feature_offset+feature:])
+		d.skip = skip
 		results = append(results, d)
 	}
 
 	return results
 }
 
-func (m *mecabDic) getEntries(result int, s string) []*DicEntry {
-	return m.getEntriesByIndex(result>>8, result&0xff, s)
+func (m *mecabDic) getEntries(result int, s string, skip bool) []*DicEntry {
+	return m.getEntriesByIndex(result>>8, result&0xff, s, skip)
 }
 
 func (m *mecabDic) lookup(s []byte) []*DicEntry {
@@ -325,7 +327,7 @@ func (m *mecabDic) lookup(s []byte) []*DicEntry {
 		result, ln := v[0], v[1]
 		index := int(result >> 8)
 		count := int(result & 0xff)
-		newResults := m.getEntriesByIndex(index, count, string(s[:ln]))
+		newResults := m.getEntriesByIndex(index, count, string(s[:ln]), false)
 		results = append(results, newResults...)
 	}
 
@@ -334,10 +336,11 @@ func (m *mecabDic) lookup(s []byte) []*DicEntry {
 
 func (m *mecabDic) lookupUnknowns(s []byte, cp *charProperty) ([]*DicEntry, bool) {
 	default_type, ln_list, invoke := cp.getUnknownLengths(s)
-	result := m.exactMatchSearch([]byte(cp.category_names[int(default_type)]))
+	category_name := cp.category_names[int(default_type)]
+	result := m.exactMatchSearch([]byte(category_name))
 	results := make([]*DicEntry, 0)
 	for _, ln := range ln_list {
-		newResults := m.getEntries(int(result), string(s[:ln]))
+		newResults := m.getEntries(int(result), string(s[:ln]), category_name == "SPACE")
 		results = append(results, newResults...)
 	}
 	return results, invoke

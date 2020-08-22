@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"strings"
 )
 
 func print(morphemes [][2]string) {
@@ -32,7 +33,7 @@ func main() {
 		panic(err)
 	}
 
-	for _, s := range regexp.MustCompile("\r\n|\n\r|\n|\r").Split(string(input), -1) {
+	for _, s := range regexp.MustCompile("\r\n|\n\r|\n|\r").Split(strings.TrimSpace(string(input)), -1) {
 
 		if *n > 1 {
 			morphemes_list, err := tokenizer.TokenizeNBest(s, *n)
