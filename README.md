@@ -24,6 +24,8 @@ $ go get github.com/nakagami/goawabi/cmd/goawabi
 
 ## How to use
 
+### goawabi command
+
 ```
 $ echo 'すもももももももものうち' |goawabi
 すもも	名詞,一般,*,*,*,*,すもも,スモモ,スモモ
@@ -54,6 +56,13 @@ EOS
 うち	名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 EOS
 ```
+
+### use as library
+
+See main as sample code.
+
+- tokensize https://github.com/nakagami/goawabi/blob/master/cmd/goawabi/main.go#L48
+- N best match https://github.com/nakagami/goawabi/blob/master/cmd/goawabi/main.go#L39
 
 ## See also
 
