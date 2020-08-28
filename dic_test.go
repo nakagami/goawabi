@@ -92,14 +92,22 @@ func TestLookup(t *testing.T) {
 	}
 
 	s := []byte("すもももももももものうち")
-
 	r := sys_dic.commonPrefixSearch(s)
 	if len(r) != 3 {
 		t.Errorf("commonPrefixSearch() failed")
 	}
-
 	entries := sys_dic.lookup(s)
 	if len(entries) != 9 {
+		t.Errorf("lookup() failed")
+	}
+
+	s = []byte("もももももも")
+	r = sys_dic.commonPrefixSearch(s)
+	if len(r) != 2 {
+		t.Errorf("commonPrefixSearch() failed")
+	}
+	entries = sys_dic.lookup(s)
+	if len(entries) != 4 {
 		t.Errorf("lookup() failed")
 	}
 }
