@@ -32,7 +32,8 @@ import (
 // Node
 
 type Node struct {
-	entry      *DicEntry
+	original   string
+	feature    string
 	pos        int32
 	epos       int32
 	index      int32
@@ -47,7 +48,8 @@ type Node struct {
 
 func newBos() *Node {
 	node := new(Node)
-	node.entry = nil
+	node.original = ""
+	node.feature = ""
 	node.pos = 0
 	node.epos = 1
 	node.index = 0
@@ -64,7 +66,8 @@ func newBos() *Node {
 
 func newEos(pos int32) *Node {
 	node := new(Node)
-	node.entry = nil
+	node.original = ""
+	node.feature = ""
 	node.pos = pos
 	node.epos = pos + 1
 	node.index = 0
@@ -81,7 +84,8 @@ func newEos(pos int32) *Node {
 
 func newNode(e *DicEntry) *Node {
 	node := new(Node)
-	node.entry = e
+	node.original = e.original
+	node.feature = e.feature
 	node.pos = 0
 	node.epos = 0
 	node.index = int32(e.posid)
@@ -97,18 +101,19 @@ func newNode(e *DicEntry) *Node {
 }
 
 func (node *Node) isBos() bool {
-	return node.entry == nil && node.pos == 0
+	return node.original == "" && node.pos == 0
 }
 
 func (node *Node) isEos() bool {
-	return node.entry == nil && node.pos != 0
+	return node.original == "" && node.pos != 0
 }
 
 func (node *Node) nodeLen() int32 {
-	if node.entry != nil {
-		return int32(len(node.entry.original))
+	ln := int32(len(node.original))
+	if ln == 0 {
+		ln = 1 // BOS or EOS
 	}
-	return 1 // BOS or EOS
+	return ln
 }
 
 func reverseNodes(nodes []*Node) {
@@ -314,7 +319,7 @@ func (bp *backwardPath) printPath() {
 		} else if node.isEos() {
 			fmt.Printf("\tEOS\n")
 		} else {
-			fmt.Printf("\t%s\t%s\n", node.entry.original, node.entry.feature)
+			fmt.Printf("\t%s\t%s\n", node.original, node.feature)
 		}
 	}
 }
