@@ -6,25 +6,37 @@ See also an original Rust implementation `awabi` https://github.com/nakagami/awa
 
 ## Requirements and how to install
 
+### Install Mecab dictionary data
+
 MeCab https://taku910.github.io/mecab/ and related dictionary is required.
 
-### Debian/Ubuntu
+It is recommended to install mecab to update the dictionary and check its operation.
+
+#### Debian/Ubuntu
 ```
 $ sudo apt install mecab
 $ sudo apt install mecab-ipadic-utf8
-$ go install github.com/nakagami/goawabi/cmd/goawabi@latest
 ```
 
-### Mac OS X (homebrew)
+#### Mac OS X (homebrew)
 ```
 $ brew install mecab
 $ brew install mecab-ipadic
-$ go install github.com/nakagami/goawabi/cmd/goawabi@latest
 ```
 
 ## How to use
 
+Goawabi can execute as a command or called from a library
+
 ### goawabi command
+
+#### Install goawabi command
+
+```
+$ go install github.com/nakagami/goawabi/cmd/goawabi@latest
+```
+
+#### Command Excample
 
 ```
 $ echo 'すもももももももものうち' |goawabi
@@ -37,6 +49,7 @@ $ echo 'すもももももももものうち' |goawabi
 うち	名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 EOS
 ```
+
 ```
 $ echo 'すもももももももものうち' |goawabi  -N 2
 すもも	名詞,一般,*,*,*,*,すもも,スモモ,スモモ
