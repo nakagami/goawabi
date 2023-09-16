@@ -12,14 +12,14 @@ MeCab https://taku910.github.io/mecab/ and related dictionary is required.
 ```
 $ sudo apt install mecab
 $ sudo apt install mecab-ipadic-utf8
-$ go get github.com/nakagami/goawabi/cmd/goawabi
+$ go install github.com/nakagami/goawabi/cmd/goawabi@latest
 ```
 
 ### Mac OS X (homebrew)
 ```
 $ brew install mecab
 $ brew install mecab-ipadic
-$ go get github.com/nakagami/goawabi/cmd/goawabi
+$ go install github.com/nakagami/goawabi/cmd/goawabi@latest
 ```
 
 ## How to use
